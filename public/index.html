@@ -685,17 +685,21 @@ document.querySelector("#signInButton").addEventListener("click", async () => {
 });
 
 supabaseClient.auth.onAuthStateChange((_event, session) => {
-  authButton.textContent = session ? "Мой аккаунт" : "Войти";
+  authButton.textContent = session ? "Выйти" : "Войти";
+
   if (session) {
+    authButton.onclick = async () => {
+      await supabaseClient.auth.signOut();
+      authModal.style.display = "none";
+    };
+
     authMessage.textContent = "Ты вошёл как " + session.user.email;
+  } else {
+    authButton.onclick = () => {
+      authModal.style.display = "flex";
+    };
   }
 });
-try {
-  const saved = JSON.parse(localStorage.getItem("neurova_history") || "[]");
-  history = Array.isArray(saved) ? saved.slice(0, 20) : [];
-} catch {
-  history = [];
-}
 
 const descriptions = {
   "AI-копирайтер": "Создавай качественные тексты с помощью искусственного интеллекта.",
