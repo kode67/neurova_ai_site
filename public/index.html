@@ -513,6 +513,15 @@ footer {
     <button class="copy" id="closeAuthButton" type="button" style="width:100%;margin-top:10px;">Закрыть</button>
   </div>
 </div>
+<div id="userDashboard" style="display:none;position:fixed;inset:0;z-index:1001;background:#000b;align-items:center;justify-content:center;padding:20px;">
+  <div style="width:100%;max-width:420px;background:#15172c;border:1px solid #9270ff66;border-radius:20px;padding:25px;">
+    <h2>Мой аккаунт</h2>
+    <p style="margin:15px 0;color:#999bb8;">Твоя почта:</p>
+    <p id="userEmail" style="margin-bottom:20px;"></p>
+    <button class="generate" id="logoutButton" style="width:100%;">Выйти из аккаунта</button>
+<button class="copy" id="dashboardClose" style="width:100%;margin-top:10px;">Закрыть</button>
+  </div>
+</div>
 <section class="hero">
   <div class="tag">✦ ТВОЁ ПРОСТРАНСТВО ИСКУССТВЕННОГО ИНТЕЛЛЕКТА</div>
   <h1>Создавай больше.<br><span class="gradient">Думай без границ.</span></h1>
@@ -650,7 +659,12 @@ let history = [];
 const authButton = document.querySelector("#authButton");
 const authModal = document.querySelector("#authModal");
 const authMessage = document.querySelector("#authMessage");
+const userDashboard = document.querySelector("#userDashboard");
+const userEmail = document.querySelector("#userEmail");
 
+document.querySelector("#dashboardClose").addEventListener("click", () => {
+  userDashboard.style.display = "none";
+});
 authButton.addEventListener("click", () => {
   authModal.style.display = "flex";
 });
@@ -685,12 +699,12 @@ document.querySelector("#signInButton").addEventListener("click", async () => {
 });
 
 supabaseClient.auth.onAuthStateChange((_event, session) => {
-  authButton.textContent = session ? "Выйти" : "Войти";
+  authButton.textContent = session ? "Мой аккаунт" : "Войти";
 
   if (session) {
-    authButton.onclick = async () => {
-      await supabaseClient.auth.signOut();
-      authModal.style.display = "none";
+    authButton.onclick = () => {
+      userEmail.textContent = session.user.email;
+      userDashboard.style.display = "flex";
     };
 
     authMessage.textContent = "Ты вошёл как " + session.user.email;
@@ -698,7 +712,15 @@ supabaseClient.auth.onAuthStateChange((_event, session) => {
     authButton.onclick = () => {
       authModal.style.display = "flex";
     };
+
+    userDashboard.style.display = "none";
   }
+});
+
+document.querySelector("#logoutButton").addEventListener("click", async () => {
+  await supabaseClient.auth.signOut();
+  userDashboard.style.display = "none";
+  authButton.textContent = "Войти";
 });
 
 const descriptions = {
