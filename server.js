@@ -10,31 +10,44 @@ app.use(express.static(path.join(__dirname, "public")));
 app.post("/api/generate", async (req, res) => {
   const { prompt, tool, tone, length } = req.body || {};
 
-  if (!prompt || !prompt.trim()) {
-    return res.status(400).json({ error: "Введите запрос." });
+  if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
+    return res.status(400).json({
+      error: "Введите запрос."
+    });
+  }
+
+  if (!process.env.GROQ_API_KEY) {
+    return res.status(500).json({
+      error: "Не добавлен GROQ_API_KEY в настройках Render."
+    });
   }
 
   try {
     const response = await fetch(
-      "http://127.0.0.1:11434/api/chat",
+      "https://api.groq.com/openai/v1/chat/completions",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
         },
         body: JSON.stringify({
-          model: "llama3.2:3b",
-          stream: false,
+          model: "llama-3.3-70b-versatile",
           messages: [
             {
               role: "system",
-              content: "Ты умный русскоязычный помощник NEUROVA. Отвечай подробно, грамотно и понятно."
+              content: "Ты NEUROVA AI — умный русскоязычный помощник. Отвечай грамотно, понятно и полезно."
             },
             {
               role: "user",
-              content: `${tool}\nСтиль: ${tone}\nОбъём: ${length}\nЗапрос: ${prompt}`
+              content: `Инструмент: ${tool || "AI-помощник"}
+Стиль: ${tone || "Профессиональный"}
+Объём: ${length || "Средний"}
+Запрос: ${prompt.trim()}`
             }
-          ]
+          ],
+          temperature: 0.7,
+          max_completion_tokens: 1500
         })
       }
     );
@@ -42,22 +55,34 @@ app.post("/api/generate", async (req, res) => {
     const data = await response.json();
 
     if (!response.ok) {
-      return res.status(500).json({
-        error: data.error || "Ошибка Ollama"
+      console.error("Groq API error:", data);
+
+      return res.status(response.status).json({
+        error: data.error?.message || "Ошибка облачного AI. Попробуйте позже."
       });
     }
 
-    res.json({
-      text: data.message?.content || "Нет ответа от модели."
-    });
+    const answer = data.choices?.[0]?.message?.content;
+
+    if (!answer) {
+      return res.status(500).json({
+        error: "AI не вернул ответ. Попробуйте ещё раз."
+      });
+    }
+
+    res.json({ text: answer });
 
   } catch (error) {
+    console.error("Server error:", error);
+
     res.status(500).json({
-      error: "Ollama не запущен. Проверь программу Ollama."
+      error: "Не удалось подключиться к облачному AI."
     });
   }
 });
 
-app.listen(3000, () => {
-  console.log("NEUROVA запущен: http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`NEUROVA запущен на порту ${PORT}`);
 });
