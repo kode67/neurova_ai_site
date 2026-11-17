@@ -489,9 +489,30 @@ footer {
     NEUROVA
     <span>ARTIFICIAL INTELLIGENCE</span>
   </div>
-  <div class="status">Система готова</div>
-</header>
 
+  <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+    <div class="status">Система готова</div>
+    <button class="copy" id="authButton" type="button">
+      Войти
+    </button>
+  </div>
+</header>
+<div id="authModal" style="display:none;position:fixed;inset:0;z-index:1000;background:#000b;align-items:center;justify-content:center;padding:20px;">
+  <div style="width:100%;max-width:420px;background:#15172c;border:1px solid #9270ff66;border-radius:20px;padding:25px;">
+    <h2 style="margin-bottom:10px;">Аккаунт NEUROVA</h2>
+    <p id="authMessage" style="color:#999bb8;font-size:13px;margin-bottom:15px;">Войди или создай аккаунт.</p>
+
+    <label class="field-label" for="authEmail">Электронная почта</label>
+    <input id="authEmail" type="email" placeholder="example@mail.com" style="width:100%;padding:14px;border-radius:10px;background:#090b19;color:white;border:1px solid #ffffff22;">
+
+    <label class="field-label" for="authPassword">Пароль</label>
+    <input id="authPassword" type="password" placeholder="Минимум 6 символов" style="width:100%;padding:14px;border-radius:10px;background:#090b19;color:white;border:1px solid #ffffff22;">
+
+    <button class="generate" id="signInButton" type="button">Войти</button>
+    <button class="copy" id="signUpButton" type="button" style="width:100%;margin-top:10px;">Зарегистрироваться</button>
+    <button class="copy" id="closeAuthButton" type="button" style="width:100%;margin-top:10px;">Закрыть</button>
+  </div>
+</div>
 <section class="hero">
   <div class="tag">✦ ТВОЁ ПРОСТРАНСТВО ИСКУССТВЕННОГО ИНТЕЛЛЕКТА</div>
   <h1>Создавай больше.<br><span class="gradient">Думай без границ.</span></h1>
@@ -606,7 +627,7 @@ footer {
 <footer>
   © 2026 NEUROVA AI. Все права защищены.
 </footer>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const form = document.querySelector("#generateForm");
 const promptInput = document.querySelector("#prompt");
@@ -617,10 +638,58 @@ const loading = document.querySelector("#loading");
 const result = document.querySelector("#result");
 const resultText = document.querySelector("#resultText");
 const historyList = document.querySelector("#historyList");
+const SUPABASE_URL = "https://qxpwguvvtgqxsfmeodll.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Ce-sl4BWbw-Z7BMypVr4xw_OJ9ETbfN";
 
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 let currentTool = "AI-копирайтер";
 let history = [];
+const authButton = document.querySelector("#authButton");
+const authModal = document.querySelector("#authModal");
+const authMessage = document.querySelector("#authMessage");
 
+authButton.addEventListener("click", () => {
+  authModal.style.display = "flex";
+});
+
+document.querySelector("#closeAuthButton").addEventListener("click", () => {
+  authModal.style.display = "none";
+});
+
+document.querySelector("#signUpButton").addEventListener("click", async () => {
+  const email = document.querySelector("#authEmail").value.trim();
+  const password = document.querySelector("#authPassword").value;
+
+  const { error } = await supabaseClient.auth.signUp({ email, password });
+
+  authMessage.textContent = error
+    ? error.message
+    : "Проверь почту для подтверждения регистрации.";
+});
+
+document.querySelector("#signInButton").addEventListener("click", async () => {
+  const email = document.querySelector("#authEmail").value.trim();
+  const password = document.querySelector("#authPassword").value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  authMessage.textContent = error
+    ? error.message
+    : "Ты успешно вошёл!";
+});
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  authButton.textContent = session ? "Мой аккаунт" : "Войти";
+  if (session) {
+    authMessage.textContent = "Ты вошёл как " + session.user.email;
+  }
+});
 try {
   const saved = JSON.parse(localStorage.getItem("neurova_history") || "[]");
   history = Array.isArray(saved) ? saved.slice(0, 20) : [];
