@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEUROVA AI — Искусственный интеллект</title>
+<meta name="description" content="NEUROVA AI — умное пространство для идей, текстов и творчества.">
+
+<style>
+:root {
+  --bg: #080914;
+  --panel: #111326;
+  --panel2: #171a31;
+  --text: #f5f5ff;
+  --muted: #999bb8;
+  --purple: #9270ff;
+  --cyan: #53dfff;
+  --border: rgba(255,255,255,.09);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  width: 600px;
+  height: 600px;
+  top: -250px;
+  left: -180px;
+  background: #7044ff;
+  opacity: .13;
+  filter: blur(150px);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatGlow 12s ease-in-out infinite alternate;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  width: 500px;
+  height: 500px;
+  right: -200px;
+  bottom: -200px;
+  background: #00cfff;
+  opacity: .10;
+  filter: blur(150px);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: floatGlow 15s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes floatGlow {
+  from { transform: translate(0,0) scale(1); }
+  to { transform: translate(70px,50px) scale(1.2); }
+}
+
+button, input, textarea, select { font: inherit; }
+
+button { cursor: pointer; }
+
+header {
+  width: min(1200px, 92%);
+  margin: auto;
+  padding: 24px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  background: linear-gradient(90deg,#fff,#a78bff,#5de5ff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.logo span {
+  font-size: 11px;
+  display: block;
+  letter-spacing: 4px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.status {
+  color: #75f0b0;
+  font-size: 12px;
+  border: 1px solid #75f0b044;
+  background: #75f0b010;
+  padding: 9px 14px;
+  border-radius: 30px;
+}
+
+.status::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  background: #75f0b0;
+  border-radius: 50%;
+  margin-right: 8px;
+  box-shadow: 0 0 10px #75f0b0;
+}
+
+.hero {
+  width: min(950px, 92%);
+  margin: 75px auto 55px;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  animation: appear .9s ease both;
+}
+
+@keyframes appear {
+  from { opacity: 0; transform: translateY(25px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tag {
+  display: inline-block;
+  color: #c7b9ff;
+  border: 1px solid #9270ff55;
+  background: #9270ff14;
+  padding: 9px 16px;
+  border-radius: 30px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  margin-bottom: 25px;
+}
+
+.hero h1 {
+  font-size: clamp(38px,7vw,76px);
+  line-height: 1.08;
+  letter-spacing: -3px;
+  margin-bottom: 22px;
+}
+
+.gradient {
+  background: linear-gradient(90deg,#a78bff,#5de5ff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  max-width: 620px;
+  margin: auto;
+  color: var(--muted);
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.workspace {
+  width: min(1100px,92%);
+  margin: auto;
+  display: grid;
+  grid-template-columns: 245px 1fr;
+  gap: 18px;
+  position: relative;
+  z-index: 1;
+}
+
+.panel {
+  background: linear-gradient(145deg,#15172c,#0f1121);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 15px 60px #00000030;
+  transition: border-color .3s, transform .3s, box-shadow .3s;
+}
+
+.panel:hover {
+  border-color: #9270ff55;
+  box-shadow: 0 15px 60px #9270ff12;
+}
+
+.sidebar h3 {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  margin-bottom: 17px;
+}
+
+.tool {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 9px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: #c9c9df;
+  text-align: left;
+  transition: .25s;
+}
+
+.tool:hover {
+  background: #ffffff08;
+  border-color: var(--border);
+  transform: translateX(4px);
+}
+
+.tool.active {
+  color: white;
+  background: linear-gradient(100deg,#9270ff30,#53dfff10);
+  border-color: #9270ff66;
+}
+
+.tool-icon { font-size: 20px; }
+
+.workspace-main h2 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+
+.description {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  color: #d8d8ed;
+  margin: 18px 0 9px;
+}
+
+textarea, select {
+  width: 100%;
+  border: 1px solid var(--border);
+  outline: none;
+  background: #090b19;
+  color: white;
+  border-radius: 12px;
+  padding: 15px;
+  transition: .25s;
+}
+
+textarea {
+  min-height: 145px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+textarea:focus, select:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px #9270ff18;
+}
+
+select { cursor: pointer; }
+
+select option {
+  background: #111326;
+}
+
+.generate {
+  width: 100%;
+  margin-top: 23px;
+  border: 0;
+  padding: 16px;
+  color: white;
+  font-weight: 800;
+  border-radius: 12px;
+  background: linear-gradient(100deg,#7956ef,#4c9eff);
+  box-shadow: 0 7px 25px #7956ef40;
+  transition: .25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.generate::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg,transparent,#ffffff40,transparent);
+  transform: skewX(-20deg);
+  transition: .6s;
+}
+
+.generate:hover::after { left: 150%; }
+
+.generate:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px #7956ef65;
+}
+
+.generate:disabled {
+  opacity: .6;
+  cursor: wait;
+  transform: none;
+}
+
+.result {
+  display: none;
+  margin-top: 20px;
+  animation: appear .4s ease both;
+}
+
+.result.show { display: block; }
+
+.resulthead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.copy {
+  border: 1px solid var(--border);
+  background: #ffffff0a;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  transition: .2s;
+}
+
+.copy:hover {
+  background: #9270ff30;
+  border-color: #9270ff;
+}
+
+.resulttext {
+  color: #dedff3;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
+.loading {
+  display: none;
+  color: #b7a4ff;
+  margin-top: 15px;
+  font-size: 13px;
+}
+
+.loading.show { display: block; }
+
+.history-entry {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-entry:last-child { border-bottom: 0; }
+
+.history-prompt {
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 7px;
+  overflow-wrap: anywhere;
+}
+
+.history-answer {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 65px;
+  overflow: hidden;
+}
+
+.history-open {
+  margin-top: 9px;
+  color: #b7a4ff;
+  background: transparent;
+  border: 0;
+  font-size: 12px;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.section {
+  width: min(1100px,92%);
+  margin: 100px auto;
+  position: relative;
+  z-index: 1;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 35px;
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 16px;
+}
+
+.feature {
+  padding: 25px;
+  border: 1px solid var(--border);
+  border-radius: 17px;
+  background: #111326aa;
+  transition: .3s;
+}
+
+.feature:hover {
+  transform: translateY(-7px);
+  border-color: #9270ff77;
+  background: #171a31;
+}
+
+.feature-icon {
+  font-size: 27px;
+  margin-bottom: 17px;
+}
+
+.feature h3 { margin-bottom: 10px; }
+
+.feature p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 35px 15px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+@media(max-width:750px) {
+  .workspace { grid-template-columns: 1fr; }
+  .sidebar { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .sidebar h3 { grid-column: 1/-1; }
+  .tool { margin: 0; padding: 11px; font-size: 12px; }
+  .features { grid-template-columns: 1fr; }
+  .hero { margin-top: 50px; }
+  .hero h1 { letter-spacing: -1.5px; }
+  .section { margin: 70px auto; }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">
+    NEUROVA
+    <span>ARTIFICIAL INTELLIGENCE</span>
+  </div>
+  <div class="status">Система готова</div>
+</header>
+
+<section class="hero">
+  <div class="tag">✦ ТВОЁ ПРОСТРАНСТВО ИСКУССТВЕННОГО ИНТЕЛЛЕКТА</div>
+  <h1>Создавай больше.<br><span class="gradient">Думай без границ.</span></h1>
+  <p>
+    Единое AI-пространство для идей, текстов, контента и планирования.
+    Превращай свои мысли в готовые результаты.
+  </p>
+</section>
+
+<main class="workspace">
+
+  <aside class="panel sidebar">
+    <h3>ИНСТРУМЕНТЫ</h3>
+
+    <button class="tool active" data-tool="AI-копирайтер">
+      <span class="tool-icon">✍️</span> AI-копирайтер
+    </button>
+
+    <button class="tool" data-tool="Генератор идей">
+      <span class="tool-icon">💡</span> Генератор идей
+    </button>
+
+    <button class="tool" data-tool="Социальные сети">
+      <span class="tool-icon">📱</span> Социальные сети
+    </button>
+
+    <button class="tool" data-tool="Планировщик">
+      <span class="tool-icon">📅</span> Планировщик
+    </button>
+  </aside>
+
+  <section class="panel workspace-main">
+    <h2 id="toolTitle">AI-копирайтер</h2>
+    <p class="description" id="toolDescription">
+      Создавай качественные тексты с помощью искусственного интеллекта.
+    </p>
+
+    <form id="generateForm">
+      <label class="field-label" for="prompt">Что нужно создать?</label>
+      <textarea id="prompt" placeholder="Например: придумай 5 идей для прибыльного онлайн-бизнеса..." required></textarea>
+
+      <label class="field-label" for="tone">Стиль ответа</label>
+      <select id="tone">
+        <option>Профессиональный</option>
+        <option>Дружелюбный</option>
+        <option>Креативный</option>
+        <option>Простой и понятный</option>
+        <option>Убедительный</option>
+      </select>
+
+      <label class="field-label" for="length">Объём ответа</label>
+      <select id="length">
+        <option>Краткий</option>
+        <option selected>Средний</option>
+        <option>Подробный</option>
+      </select>
+
+      <button class="generate" id="generateButton" type="submit">
+        ✦ Создать с помощью AI
+      </button>
+
+      <div class="loading" id="loading">
+        ✦ NEUROVA AI создаёт ответ. Пожалуйста, подожди...
+      </div>
+    </form>
+
+    <div class="result" id="result">
+      <div class="resulthead">
+        <span>✦ РЕЗУЛЬТАТ ГЕНЕРАЦИИ</span>
+        <button class="copy" id="copyResult" type="button">Копировать</button>
+      </div>
+      <div class="resulttext" id="resultText"></div>
+    </div>
+  </section>
+
+</main>
+
+<section class="workspace panel" style="display:block;margin-top:20px;max-width:1100px;" id="historyPanel">
+  <div class="resulthead">
+    <span>◷ ИСТОРИЯ ГЕНЕРАЦИЙ</span>
+    <button class="copy" id="clearHistory" type="button">Очистить</button>
+  </div>
+  <div id="historyList">
+    <p class="empty">Здесь пока нет сохранённых результатов.</p>
+  </div>
+</section>
+
+<section class="section">
+  <h2 class="section-title">Возможности <span class="gradient">NEUROVA</span></h2>
+
+  <div class="features">
+    <article class="feature">
+      <div class="feature-icon">⚡</div>
+      <h3>Быстрая генерация</h3>
+      <p>Получай идеи, тексты и ответы на свои запросы за считанные секунды.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">🧠</div>
+      <h3>Умные идеи</h3>
+      <p>Используй AI для поиска решений, развития проектов и новых возможностей.</p>
+    </article>
+
+    <article class="feature">
+      <div class="feature-icon">🚀</div>
+      <h3>Больше возможностей</h3>
+      <p>Работай с контентом, планами и творческими задачами в одном месте.</p>
+    </article>
+  </div>
+</section>
+
+<footer>
+  © 2026 NEUROVA AI. Все права защищены.
+</footer>
+
+<script>
+const form = document.querySelector("#generateForm");
+const promptInput = document.querySelector("#prompt");
+const toneInput = document.querySelector("#tone");
+const lengthInput = document.querySelector("#length");
+const generateButton = document.querySelector("#generateButton");
+const loading = document.querySelector("#loading");
+const result = document.querySelector("#result");
+const resultText = document.querySelector("#resultText");
+const historyList = document.querySelector("#historyList");
+
+let currentTool = "AI-копирайтер";
+let history = [];
+
+try {
+  const saved = JSON.parse(localStorage.getItem("neurova_history") || "[]");
+  history = Array.isArray(saved) ? saved.slice(0, 20) : [];
+} catch {
+  history = [];
+}
+
+const descriptions = {
+  "AI-копирайтер": "Создавай качественные тексты с помощью искусственного интеллекта.",
+  "Генератор идей": "Находи свежие идеи для бизнеса, проектов и творчества.",
+  "Социальные сети": "Создавай публикации, описания и контент для социальных сетей.",
+  "Планировщик": "Составляй планы, расписания и пошаговые стратегии."
+};
+
+document.querySelectorAll(".tool").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll(".tool").forEach(item => {
+      item.classList.remove("active");
+    });
+
+    button.classList.add("active");
+    currentTool = button.dataset.tool;
+
+    document.querySelector("#toolTitle").textContent = currentTool;
+    document.querySelector("#toolDescription").textContent =
+      descriptions[currentTool];
+
+    promptInput.focus();
+  });
+});
+
+function saveHistory() {
+  try {
+    localStorage.setItem("neurova_history", JSON.stringify(history));
+  } catch (error) {
+    console.warn("Не удалось сохранить историю:", error);
+  }
+}
+
+function renderHistory() {
+  historyList.replaceChildren();
+
+  if (!history.length) {
+    const empty = document.createElement("p");
+    empty.className = "empty";
+    empty.textContent = "Здесь пока нет сохранённых результатов.";
+    historyList.append(empty);
+    return;
+  }
+
+  history.forEach((item, index) => {
+    const entry = document.createElement("div");
+    entry.className = "history-entry";
+
+    const title = document.createElement("div");
+    title.className = "history-prompt";
+    title.textContent = item.prompt;
+
+    const answer = document.createElement("div");
+    answer.className = "history-answer";
+    answer.textContent = item.text;
+
+    const openButton = document.createElement("button");
+    openButton.className = "history-open";
+    openButton.type = "button";
+    openButton.textContent = "Открыть результат";
+
+    openButton.addEventListener("click", () => {
+      resultText.textContent = item.text;
+      result.classList.add("show");
+      result.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+
+    entry.append(title, answer, openButton);
+    historyList.append(entry);
+  });
+}
+
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const prompt = promptInput.value.trim();
+
+  if (!prompt) {
+    alert("Сначала напиши свой запрос.");
+    return;
+  }
+
+  generateButton.disabled = true;
+  generateButton.textContent = "Создаём...";
+  loading.classList.add("show");
+  result.classList.remove("show");
+
+  try {
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        prompt: prompt,
+        tool: currentTool,
+        tone: toneInput.value,
+        length: lengthInput.value
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || "Ошибка при генерации.");
+    }
+
+    if (!data.text) {
+      throw new Error("AI вернул пустой ответ.");
+    }
+
+    resultText.textContent = data.text;
+    result.classList.add("show");
+
+    history.unshift({
+      prompt: prompt,
+      text: data.text,
+      tool: currentTool,
+      date: new Date().toISOString()
+    });
+
+    history = history.slice(0, 20);
+    saveHistory();
+    renderHistory();
+
+    result.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest"
+    });
+
+  } catch (error) {
+    resultText.textContent = "Не удалось получить ответ: " + error.message;
+    result.classList.add("show");
+  } finally {
+    generateButton.disabled = false;
+    generateButton.textContent = "✦ Создать с помощью AI";
+    loading.classList.remove("show");
+  }
+});
+
+document.querySelector("#copyResult").addEventListener("click", async () => {
+  const text = resultText.textContent;
+
+  if (!text) return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    document.querySelector("#copyResult").textContent = "Скопировано ✓";
+  } catch {
+    const temporary = document.createElement("textarea");
+    temporary.value = text;
+    document.body.append(temporary);
+    temporary.select();
+    document.execCommand("copy");
+    temporary.remove();
+    document.querySelector("#copyResult").textContent = "Скопировано ✓";
+  }
+
+  setTimeout(() => {
+    document.querySelector("#copyResult").textContent = "Копировать";
+  }, 1800);
+});
+
+document.querySelector("#clearHistory").addEventListener("click", () => {
+  if (!history.length) return;
+
+  if (confirm("Удалить всю историю генераций?")) {
+    history = [];
+    saveHistory();
+    renderHistory();
+  }
+});
+
+renderHistory();
+</script>
+
+</body>
+</html>
