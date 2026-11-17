@@ -693,9 +693,11 @@ document.querySelector("#signInButton").addEventListener("click", async () => {
     password
   });
 
-  authMessage.textContent = error
-    ? error.message
-    : "Ты успешно вошёл!";
+ if (error) {
+  authMessage.textContent = error.message;
+} else {
+  authModal.style.display = "none";
+}
 });
 
 supabaseClient.auth.onAuthStateChange((_event, session) => {
